@@ -1,0 +1,14 @@
+*.DS_Store
+.idea
+node_modules
+node
+target
+dist
+.classpath
+.settings
+.project
+.vscode
+coverage
+.metadata
+*.iml
+rebel.xml
