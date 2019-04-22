@@ -21,7 +21,7 @@ public class CarCostCalculatorServiceTest {
     @Mock
     private CarTypeCostCalculator carTypeCostCalculator;
     @Mock
-    private OptionCostCalculator optionCostCalculator;
+    private OptionsCostCalculator optionsCostCalculator;
     @Mock
     private LuxuryTaxCalculator luxuryTaxCalculator;
     @Mock
@@ -41,57 +41,54 @@ public class CarCostCalculatorServiceTest {
     public void shouldReturnZeroIfCarTypeIsNull() throws Exception {
         assertThat(sut.calculate(null, new String[] { "someoption" }, "12345"), is(0d));
 
-        verifyZeroInteractions(carTypeCostCalculator, optionCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
+        verifyZeroInteractions(carTypeCostCalculator, optionsCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
     }
 
     @Test
     public void shouldReturnZeroIfCarTypeIsEmpty() throws Exception {
         assertThat(sut.calculate("", new String[] { "someoption" }, "12345"), is(0d));
 
-        verifyZeroInteractions(carTypeCostCalculator, optionCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
+        verifyZeroInteractions(carTypeCostCalculator, optionsCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
     }
 
     @Test
     public void shouldReturnZeroIfOptionsIsNull() throws Exception {
         assertThat(sut.calculate(carType, null, "12345"), is(0d));
 
-        verifyZeroInteractions(carTypeCostCalculator, optionCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
+        verifyZeroInteractions(carTypeCostCalculator, optionsCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
     }
 
     @Test
     public void shouldReturnZeroIfOptionsLengthIsZero() throws Exception {
         assertThat(sut.calculate(carType, new String[] {}, "12345"), is(0d));
 
-        verifyZeroInteractions(carTypeCostCalculator, optionCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
+        verifyZeroInteractions(carTypeCostCalculator, optionsCostCalculator, luxuryTaxCalculator, gasGuzzlerTaxCalculator);
     }
 
     @Test(expected = Exception.class)
     public void shouldThrowExceptionWhenInvalidOptionTypeIsSelected() throws Exception {
 
-        String option = "option";
+        final String[] options = { "option" };
 
-        when(optionCostCalculator.calculate(carType, option)).thenThrow(new Exception("some exception"));
+        when(optionsCostCalculator.calculate(carType, options)).thenThrow(new Exception("some exception"));
 
-        sut.calculate(carType, new String[] { option }, "12345");
+        sut.calculate(carType, options, "12345");
     }
 
     @Test
     public void shouldReturnTotalCostOfCar() throws Exception {
-        double option1Cost = 200;
-        String option1 = "option1";
-        double option2Cost = 300;
-        String option2 = "option2";
+        double optionsCost = 500;
         String destinationZip = "12345";
         double gasGuzzlerTax = 50;
         double luxuryTax = 75;
-        double expected = carTypeCost + option1Cost + option2Cost + gasGuzzlerTax + luxuryTax;
+        double expected = carTypeCost + optionsCost + gasGuzzlerTax + luxuryTax;
+        final String[] options = { "option1", "option2" };
 
-        when(optionCostCalculator.calculate(carType, option1)).thenReturn(option1Cost);
-        when(optionCostCalculator.calculate(carType, option2)).thenReturn(option2Cost);
+        when(optionsCostCalculator.calculate(carType, options)).thenReturn(optionsCost);
         when(gasGuzzlerTaxCalculator.calculate(carType, destinationZip)).thenReturn(gasGuzzlerTax);
         when(luxuryTaxCalculator.calculate(any(double.class))).thenReturn(luxuryTax);
 
-        assertThat(sut.calculate(carType, new String[] { option1, option2 }, destinationZip), is(expected));
+        assertThat(sut.calculate(carType, options, destinationZip), is(expected));
     }
 
 }

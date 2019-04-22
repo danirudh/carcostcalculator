@@ -11,7 +11,7 @@ public class CarCostCalculatorService {
     @Autowired
     private CarTypeCostCalculator carTypeCostCalculator;
     @Autowired
-    private OptionCostCalculator optionCostCalculator;
+    private OptionsCostCalculator optionsCostCalculator;
     @Autowired
     private LuxuryTaxCalculator luxuryTaxCalculator;
     @Autowired
@@ -26,9 +26,7 @@ public class CarCostCalculatorService {
 
         carCost += carTypeCostCalculator.calculate(carType);
 
-        for (String option : options) {
-            carCost += optionCostCalculator.calculate(carType, option);
-        }
+        carCost += optionsCostCalculator.calculate(carType, options);
 
         carCost += luxuryTaxCalculator.calculate(carCost);
         carCost += gasGuzzlerTaxCalculator.calculate(carType, destinationZip);

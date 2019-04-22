@@ -9,7 +9,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OptionCostCalculatorRepositoryTest {
+public class OptionsCostCalculatorRepositoryTest {
 
     private OptionCostRepository sut;
 

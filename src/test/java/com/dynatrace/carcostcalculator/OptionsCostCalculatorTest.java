@@ -16,17 +16,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.dynatrace.carcostcalculator.repository.OptionCostRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionCostCalculatorTest {
+public class OptionsCostCalculatorTest {
 
     @InjectMocks
-    private OptionCostCalculator sut;
+    private OptionsCostCalculator sut;
     @Mock
     private OptionCostRepository optionCostRepository;
-
-    @Test(expected = CarCostCalculationException.class)
-    public void shouldThrowExceptionWhenTowPackageOptionIsSelectedForCoupe() throws Exception {
-        sut.calculate(COUPE, "towpackage");
-    }
 
     @Test
     public void shouldReturnZeroAsCostIfdCarTypeIsNotAvailable() throws Exception {
@@ -35,7 +30,15 @@ public class OptionCostCalculatorTest {
 
         when(optionCostRepository.getOptionsCost(carType)).thenReturn(emptyMap());
 
-        assertThat(sut.calculate(carType, "V8"), is(expected));
+        assertThat(sut.calculate(carType, new String[] { "V8" }), is(expected));
+    }
+
+    @Test(expected = CarCostCalculationException.class)
+    public void shouldThrowExceptionWhenTowPackageOptionIsSelectedForCoupe() throws Exception {
+
+        when(optionCostRepository.getOptionsCost(COUPE)).thenReturn(singletonMap("BACK_CAMERA", 1000d));
+
+        sut.calculate(COUPE, new String[] { "towpackage" });
     }
 
     @Test
@@ -46,7 +49,7 @@ public class OptionCostCalculatorTest {
 
         when(optionCostRepository.getOptionsCost(carType)).thenReturn(singletonMap("BACK_CAMERA", 1000d));
 
-        assertThat(sut.calculate(carType, "V8"), is(expected));
+        assertThat(sut.calculate(carType, new String[] { "V8" }), is(expected));
     }
 
     @Test
@@ -58,6 +61,6 @@ public class OptionCostCalculatorTest {
 
         when(optionCostRepository.getOptionsCost(carType)).thenReturn(singletonMap(option, 5000d));
 
-        assertThat(sut.calculate(carType, option), is(expected));
+        assertThat(sut.calculate(carType, new String[] { option }), is(expected));
     }
 }
